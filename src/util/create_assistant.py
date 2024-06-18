@@ -8,14 +8,11 @@ client = OpenAI(
 )
 
 instructions = "You will only generate Python code using libraries like NumPy and Pandas \
-for data processing prompts. Only answer questions relevant to the csv file you are \
-supplied in the thread. If the prompt is not a data processing operation, return an \
-empty string."
+for data processing prompts."
 
 assistant = client.beta.assistants.create(
     name="codecraft_cli_assistant",
     instructions=instructions,
-    tools=[{"type": "code_interpreter"}],
     model="gpt-3.5-turbo"
 )
 
