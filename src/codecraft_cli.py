@@ -1,6 +1,8 @@
 from openai import OpenAI
-import pandas as pd
 import os, sys, argparse
+from util import yaml_reader
+
+config = yaml_reader.YamlReader("../config.yaml").get_yaml_object()
 
 def get_args():
     parser = argparse.ArgumentParser(description="CodeCraft-CLI is a \
@@ -16,17 +18,14 @@ def get_args():
 
 def generate_python_code(args):
     client = OpenAI(
-        api_key=os.environ.get("CODECRAFT_CLI_OPENAI_API_KEY"),
-        project=os.environ.get("CODECRAFT_CLI_PROJECT_ID"),
-        organization=os.environ.get("CODECRAFT_CLI_ORGANIZATION_ID"),
+        api_key=config["CODECRAFT_CLI_OPENAI_API_KEY"],
+        project=config["CODECRAFT_CLI_PROJECT_ID"],
+        organization=config["CODECRAFT_CLI_ORGANIZATION_ID"],
     )   
 
     thread = client.beta.threads.create()
 
-    df = pd.read_csv(args.input_file)
-    csv_string = df.to_csv(index=False)
-
-    prompt = f"{args.prompt}\n\nHere is the csv:\n\n{csv_string}\n\nHere is the file path: {args.input_file}\n\nHere is the output file path: {args.output_file}"
+    prompt = f"{args.prompt}\n\nHere is the input file path: {args.input_file}\n\nHere is the output file path: {args.output_file}"
 
     client.beta.threads.messages.create(
         thread_id=thread.id,
@@ -36,7 +35,7 @@ def generate_python_code(args):
 
     run = client.beta.threads.runs.create_and_poll(
         thread_id=thread.id,
-        assistant_id=os.environ.get("CODECRAFT_CLI_ASSISTANT_ID"),
+        assistant_id=config["CODECRAFT_CLI_ASSISTANT_ID"],
     )
 
     if run.status == "completed":
