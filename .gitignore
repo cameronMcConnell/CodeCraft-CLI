@@ -1,2 +1,3 @@
 /.venv
 /secrets.yaml
+/src/util/__pycache__

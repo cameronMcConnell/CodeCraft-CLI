@@ -1,5 +1,5 @@
 from openai import OpenAI
-import os, sys, argparse
+import sys, argparse
 from util import yaml_reader
 
 config = yaml_reader.YamlReader("../config.yaml").get_yaml_object()
